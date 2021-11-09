@@ -1,0 +1,8 @@
+﻿  Assembling P5_recorridoArreglo.asm...
+P0_Plantilla.obj : warning LNK4258: la directiva '/ENTRY:main@0' no es compatible con el modificador '/ENTRY:main5'; se ha omitido
+P1_introAreglos.obj : warning LNK4258: la directiva '/ENTRY:main1@0' no es compatible con el modificador '/ENTRY:main5'; se ha omitido
+P2_registros_esi_edi_.obj : warning LNK4258: la directiva '/ENTRY:main2@0' no es compatible con el modificador '/ENTRY:main5'; se ha omitido
+P3_accesoArreglos.obj : warning LNK4258: la directiva '/ENTRY:main3@0' no es compatible con el modificador '/ENTRY:main5'; se ha omitido
+P4_modificarArreglo.obj : warning LNK4258: la directiva '/ENTRY:main4@0' no es compatible con el modificador '/ENTRY:main5'; se ha omitido
+P5_recorridoArreglo.obj : warning LNK4258: la directiva '/ENTRY:main5@0' no es compatible con el modificador '/ENTRY:main5'; se ha omitido
+  PM_0_ProgramacionClase_U4.vcxproj -> C:\Users\Alejandro_GarciaRuiz\source\repos\PM_0_ProgramacionClase_U4\Debug\PM_0_ProgramacionClase_U4.exe
