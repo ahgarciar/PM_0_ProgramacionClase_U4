@@ -28,6 +28,10 @@
     <MASM Include="P3_accesoArreglos.asm" />
     <MASM Include="P4_modificarArreglo.asm" />
     <MASM Include="P5_recorridoArreglo.asm" />
+    <MASM Include="P6_arreglos_dword.asm" />
+    <MASM Include="P7_accesoPosNdeArreglo.asm" />
+    <MASM Include="P9_accesoPosNdeArregloB.asm" />
+    <MASM Include="P8_introArreglosBidimensionales.asm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MACROS.inc" />
@@ -110,7 +114,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EntryPointSymbol>main5</EntryPointSymbol>
+      <EntryPointSymbol>main9</EntryPointSymbol>
       <ImportLibrary>c:\Irvine</ImportLibrary>
     </Link>
     <MASM>

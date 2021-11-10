@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/08/21 08:54:54
+Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/10/21 08:57:46
 NombreProgram						     Page 1 - 1
 
 
@@ -106,12 +106,23 @@ Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/08/21 08:54:54
 
  00000000			.data
 				; Área de Declaración de Variables
- 00000000 0A 0C 0F 14 1E	arreglo_p5 byte 10, 12, 15, 20, 30, 8
-	   08
+ 00000000 0000000A		arreglo_p9 dword 10, 12, 15, 20, 30
+	   0000000C
+	   0000000F
+	   00000014
+	   0000001E
+ 00000014  00000007				   dword  7,  5, 10, 12, 28
+	   00000005
+	   0000000A
+	   0000000C
+	   0000001C
+
+ 00000028 00000002		filas_p9 dword 2
+ 0000002C 00000005		columnas_p9 dword 5
 
  00000000			.code
 
- 00000000				main5 PROC	
+ 00000000				main9 PROC	
 						;Lógica del Programa
 						;cuando se trabaja con arreglos, los indices se recomienda sean 
 						;accedidos utilizando a los registros edi o esi. 
@@ -121,27 +132,36 @@ Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/08/21 08:54:54
 						
  00000000  B8 00000000				mov eax, 0  ; limpia del registro para no tener contenido basura
 
- 00000005  BF 00000000				mov edi, 0 ; indice con el que se comenzará el recorrido
+ 00000005  BF 00000001				mov edi, 1 ; indice de las filas       ; fila 1   ; considerando que se comienza en 0
+ 0000000A  BE 00000004				mov esi,  4 ; indice de las columnas    ; columna 1 ; considerando que se comienza en 0
 
- 0000000A  B9 00000006				mov ecx, sizeof arreglo_p5  ; posiciona la cantidad de elementos del registro
-													; en ecx, debido a que este será utilizado
-													; como contador en el ciclo (con loop)
 
- 0000000F					ciclo:
- 0000000F  8A 87 00000000 R				mov al, arreglo_p5[edi]
- 00000015  E8 00000000 E				call writedec                     ; posicion 0
- 0000001A  E8 00000000 E				call crlf
- 0000001F  47						inc edi
- 00000020  E2 ED				loop ciclo
-					
+						;ubicacion de la loc. de mem. asociada a la fila buscada = 4 * totalColumnas * indiceFila
+ 0000000F  8B C7				mov eax, edi   ; mueve al indiceFila deseado a edi, para poder multiplicar
+ 00000011  BB 00000004				mov ebx, 4     ; total de bytes de cada elemento del arreglo (tamaño del tipo de dato)
+ 00000016  F7 E3				mul ebx        ; multiplica por el total de bytes que tiene cada elemento en el arreglo 
+ 00000018  F7 25 0000002C R			mul columnas_p9 ; (4 * indiceFila) * totalColumnas
+
+ 0000001E  8B F8				mov edi, eax  ; posicionamiento en edi de la localidad de memoria asociada al indice
+									  ; de la fila buscada
+
+
+ 00000020  8B 84 37				mov eax, arreglo_p9[edi + esi]
+	   00000000 R
+
+ 00000027  E8 00000000 E			call writedec
+ 0000002C  E8 00000000 E			call crlf
 						
+						
+
 
 						exit	
 					
- 00000029				main5 ENDP
+ 00000038				main9 ENDP
 					
-					END main5
-Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/08/21 08:54:54
+					END main9
+
+Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/10/21 08:57:46
 NombreProgram						     Symbols 2 - 1
 
 
@@ -246,8 +266,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000006 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000029 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000030 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000038 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -354,8 +374,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main5  . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000029 Public STDCALL
-  ciclo  . . . . . . . . . . . .	L Near	 0000000F _TEXT	
+main9  . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000038 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -574,12 +593,14 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-arreglo_p5 . . . . . . . . . . .	Byte	 00000000 _DATA	
+arreglo_p9 . . . . . . . . . . .	DWord	 00000000 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+columnas_p9  . . . . . . . . . .	DWord	 0000002C _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+filas_p9 . . . . . . . . . . . .	DWord	 00000028 _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
