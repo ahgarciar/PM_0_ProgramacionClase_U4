@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <MASM Include="P0_Plantilla.asm" />
+    <MASM Include="P10_recorridoArregloB.asm" />
     <MASM Include="P1_introAreglos.asm" />
     <MASM Include="P2_registros_esi_edi_.asm" />
     <MASM Include="P3_accesoArreglos.asm" />
@@ -114,7 +115,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EntryPointSymbol>main9</EntryPointSymbol>
+      <EntryPointSymbol>main10</EntryPointSymbol>
       <ImportLibrary>c:\Irvine</ImportLibrary>
     </Link>
     <MASM>

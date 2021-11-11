@@ -14,6 +14,7 @@
     <MASM Include="P7_accesoPosNdeArreglo.asm" />
     <MASM Include="P9_accesoPosNdeArregloB.asm" />
     <MASM Include="P8_introArreglosBidimensionales.asm" />
+    <MASM Include="P10_recorridoArregloB.asm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MACROS.inc" />
