@@ -24,6 +24,10 @@
   <ItemGroup>
     <MASM Include="P0_Plantilla.asm" />
     <MASM Include="P10_recorridoArregloB.asm" />
+    <MASM Include="P11_copiarCadena.asm" />
+    <MASM Include="P12_compararCadenas.asm" />
+    <MASM Include="P13_buscarEnCadena.asm" />
+    <MASM Include="P14_indiceCaracterEnCadena.asm" />
     <MASM Include="P1_introAreglos.asm" />
     <MASM Include="P2_registros_esi_edi_.asm" />
     <MASM Include="P3_accesoArreglos.asm" />
@@ -115,7 +119,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EntryPointSymbol>main10</EntryPointSymbol>
+      <EntryPointSymbol>main14</EntryPointSymbol>
       <ImportLibrary>c:\Irvine</ImportLibrary>
     </Link>
     <MASM>
