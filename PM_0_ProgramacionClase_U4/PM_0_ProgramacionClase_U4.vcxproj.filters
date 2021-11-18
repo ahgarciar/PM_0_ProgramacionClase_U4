@@ -19,6 +19,7 @@
     <MASM Include="P12_compararCadenas.asm" />
     <MASM Include="P13_buscarEnCadena.asm" />
     <MASM Include="P14_indiceCaracterEnCadena.asm" />
+    <MASM Include="P15_almacenaCaraacterEnCadena.asm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MACROS.inc" />

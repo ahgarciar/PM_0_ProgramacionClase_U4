@@ -15,7 +15,7 @@ INCLUDE MACROS.inc
 
 .data
 ; Área de Declaración de Variables
-cadena_A_p14 db "Hola Mundo",0
+cadena_A_p14 db "Hola Mundx",0
 
 
 .code
@@ -28,11 +28,12 @@ cadena_A_p14 db "Hola Mundo",0
 
 		mov eax, 0 ;limpia el registro eax
 
-		mov al, 'M'  ;caracter a buscar
+		mov al, 'r'  ;caracter a buscar
 
 		mov ecx, sizeof cadena_A_p14  ;total de elementos en la cadena
-		dec ecx ; para quitarle el cero de termino en la comparacion 
-		;dec ecx
+		dec ecx ; para quitarle el cero de termino en la comparacion 		
+
+		mov ebx, 0 ; indice
 
 		cicloBusqueda:
 
@@ -44,13 +45,32 @@ cadena_A_p14 db "Hola Mundo",0
 			esigual:
 				ImpPantallaLn "Es igual"	
 				mov ecx, 1
+				jmp continuar
 
 			noesigual:
 				ImpPantallaLn "No es igual"  ; modifica el registro de banderas
-			
-		loop cicloBusqueda	
-				
+		
+		continuar:
 
+		inc ebx
+		cmp ebx, ecx
+		jl cicloBusqueda	
+				
+		;;;;;;;;;;;;;;;;;fuera del ciclo
+
+		cmp ecx, 1
+		jz encontrado
+			;no encontrado
+			ImpPantallaLn "No se encontro el caracter buscado"
+			jmp salir
+
+		encontrado:
+			ImpPantallaLn "El caracter se encontro en el indice:"
+			mov eax, ebx
+			dec eax 
+			call writedec
+
+		salir: 
 
 		exit	
 	
@@ -58,5 +78,5 @@ cadena_A_p14 db "Hola Mundo",0
 	
 	END main14
 
-	
+	;Tareaa  INVESTIGAR "PREFIJOS DE REPITICION"
 
