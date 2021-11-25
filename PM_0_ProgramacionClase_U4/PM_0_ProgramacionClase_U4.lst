@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/24/21 08:43:35
+Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/25/21 09:05:01
 Intro Cadena						     Page 1 - 1
 
 
@@ -144,146 +144,225 @@ Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/24/21 08:43:35
 							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 							;;FALTA AÑADIR UN MÉTODO PARA LA SELECCIÓN DE LA PALABRA POR EL USUARIO/ALEATORIO
 
+							; se debe conocer la cantidad de palabras con las que cuenta el arreglo "palabras"
+							; En este caso 7 palabras, por lo que el indice puede ir de 0 al 6
+
+							;De igual manera se tiene que considerar al máximo numero de caracteres que puede tener la palabra
+							; En nuestro ejemplo son 6 caracteres
+
+ 00000000  E8 00000000 E				call randomize  ; establece la semilla para los numeros aleatorios
+
+ 00000005  B8 00000007					mov eax, 7     ; cantidad de palabras
+ 0000000A  E8 00000000 E				call randomrange ; eax ; genera un aleatorio entre 0 y el valor de eax exclusivo
+											 ;(Para este ejemplo del 0 al 6)
+
+ 0000000F  BB 00000006					mov ebx, 6     ;cantidad de caracteres máxima por palabra
+ 00000014  F7 E3					mul ebx  ; indice de palabra seleccionada * cantidad de caracteres
+									 ; de esta manera en eax se almancerá el indice con el que comienza la palabra
+									 ; que haya sido seleccionada aleatoriamente
+
+
 
 
 							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 							;;;; COPIA UNA PALABRA DEL ARREGLO A UNA VARIABLE AUXILIAR
 							;;   NO CONSIDERA GUIONES AL COPIAR LA PALABRA
 							
- 00000000  BE 00000000 R				mov esi, offset palabras_20  ;ARREGLO DE PALABRAS
- 00000005  83 C6 1E					add esi, 30     ; relacionado al indice de la palabra seleccionada
+ 00000016  BE 00000000 R				mov esi, offset palabras_20  ;ARREGLO DE PALABRAS
+ 0000001B  03 F0					add esi, eax     ; relacionado al indice de la palabra seleccionada
 
- 00000008  BF 0000002C R				mov edi, offset palabraSeleccionada_20 ;VARIABLE AUXILIAR
+ 0000001D  BF 0000002C R				mov edi, offset palabraSeleccionada_20 ;VARIABLE AUXILIAR
 
- 0000000D  B9 00000006					mov ecx, 6  ; considerar el máximo numero de caracteres que puede tener la palabra
+ 00000022  B9 00000006					mov ecx, 6  ; considerar el máximo numero de caracteres que puede tener la palabra
 
- 00000012						ciclo:				
+ 00000027						ciclo:				
 
- 00000012  8B DF						mov ebx, edi  ;respaldo del valor de edi
- 00000014  BF 0000002A R					mov edi, offset espacio_20
- 00000019  A6							cmpsb  ;compara esi con edi				
-
- 0000001A  74 15						jz detener   
-
- 0000001C  FF 05 0000003B R					inc contador_20   ;incrementa en 1
+ 00000027  8B DF						mov ebx, edi  ;respaldo del valor de edi, para posteriormente realizar 
+											  ;la comparacion de la cadena y ver si el caracter actual es un guion o no
 								
- 00000022  4E							dec esi
- 00000023  4F							dec edi
+ 00000029  BF 0000002A R					mov edi, offset espacio_20
+ 0000002E  A6							cmpsb  ;compara esi con edi , para saber si el caracter actual es guion				
+
+ 0000002F  74 14						jz detener   ;si es cero, es decir, si es guion, entonces se pasa a detener, 
+											 ;porque significa que ya no existen caracteres que copiar
+											 ;en caso contrario, se copia el caracter actual a "palabra_seleccionada"
+
+
+								;En el caso de que No sea cero, es decir, el caracter actual no es un guion, es una letra,
+								; entonces, se realiza el siguiente procedimiento:
+
+ 00000031  FF 05 0000003B R						inc contador_20   ;incrementa en 1 
+									;contador es utilizado para saber realmente cuantas letras tiene la palabra
+									; que fue selecionada
+								
+ 00000037  4E								dec esi					
 											
- 00000024  8B FB						mov edi, ebx  ;recuperar el valor de edi
- 00000026  8B C7						mov eax, edi
+ 00000038  8B FB							mov edi, ebx  ;recuperar el valor de edi (asociado al destino)
+ 0000003A  8B C7							mov eax, edi
 								
- 00000028  A4							movsb ;copiar el valor 
- 00000029  E2 E7						loop ciclo
+ 0000003C  A4								movsb ;copiar el valor 
+									
+ 0000003D  E2 E8						loop ciclo
 
- 0000002B  FF 0D 0000003B R					dec contador_20
+ 0000003F  FF 0D 0000003B R						dec contador_20
 
- 00000031						detener:
+ 00000045						detener:
+
+							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 00000045  E8 00000000 E				call crlf
+							ImpPantallaLn "Palabra Seleccionada: "
+ 0000004E		     1		.data
+ 0000004E 50 61 6C 61 62     1			??0000 db "Palabra Seleccionada: ",0
+	   72 61 20 53 65
+	   6C 65 63 63 69
+	   6F 6E 61 64 61
+	   3A 20 00
+ 0000004A		     1		.code
+ 0000004A  52		     1			push edx  ; guardo en la pila el valor
+ 0000004B  BA 0000004E R     1			mov edx, offset ??0000
+ 00000050  E8 00000000 E     1			call writestring
+ 00000055  E8 00000000 E     1			call crlf
+ 0000005A  5A		     1			pop edx   ;recupero el valor original de edx
+ 0000005B  BA 0000002C R				mov edx, offset palabraSeleccionada_20
+ 00000060  E8 00000000 E				call writestring
+ 00000065  E8 00000000 E				call crlf
 
 							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 							;;;;GENERAR PALABRA ESCONDIDA... 
 
- 00000031  8B 0D 0000003B R					mov ecx, contador_20  ; tamaño de la palabra escogida
+ 0000006A  8B 0D 0000003B R					mov ecx, contador_20  ; tamaño de la palabra escogida
 
- 00000037  BF 0000003F R					mov edi, offset palabraEscondida_20
+ 00000070  BF 0000003F R					mov edi, offset palabraEscondida_20
 
- 0000003C  B8 00000000						mov eax, 0
- 00000041  B0 2E						mov al, "."     
+ 00000075  B8 00000000						mov eax, 0
+ 0000007A  B0 2E						mov al, "."     
 
- 00000043							repite:
- 00000043  AA								stosb  ; incrementa automaticamente a edi en uno
- 00000044  E2 FD						loop repite
+ 0000007C							repite:
+ 0000007C  AA								stosb  ; incrementa automaticamente a edi en uno
+ 0000007D  E2 FD						loop repite
 								
- 00000046  E8 00000000 E				call crlf
-							println "Palabra Escondida: "
-P20_PlantillaProyectoUnidad.asm(96) : error A2008:syntax error : println
- 0000004B  BA 0000003F R				mov edx, offset palabraEscondida_20
- 00000050  E8 00000000 E				call writestring
- 00000055  E8 00000000 E				call crlf
-
-							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-							;;;; NOS MUESTRA EL CONTENIDO DE LA VARIABLE
-
- 0000005A  E8 00000000 E				 call crlf
-							println "Palabra Selecciona: "
-P20_PlantillaProyectoUnidad.asm(105) : error A2008:syntax error : println
- 0000005F  BA 0000002C R				mov edx, offset palabraSeleccionada_20
- 00000064  E8 00000000 E				call writestring
+ 0000007F  E8 00000000 E				call crlf
+							ImpPantallaLn "Palabra Escondida: "
+ 00000065		     1		.data
+ 00000065 50 61 6C 61 62     1			??0001 db "Palabra Escondida: ",0
+	   72 61 20 45 73
+	   63 6F 6E 64 69
+	   64 61 3A 20 00
+ 00000084		     1		.code
+ 00000084  52		     1			push edx  ; guardo en la pila el valor
+ 00000085  BA 00000065 R     1			mov edx, offset ??0001
+ 0000008A  E8 00000000 E     1			call writestring
+ 0000008F  E8 00000000 E     1			call crlf
+ 00000094  5A		     1			pop edx   ;recupero el valor original de edx
+ 00000095  BA 0000003F R				mov edx, offset palabraEscondida_20
+ 0000009A  E8 00000000 E				call writestring
+ 0000009F  E8 00000000 E				call crlf
 
 							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 							;;;;; PROCEDIMIENTO EN DESARROLLO..."BUSCAR UNA LETRA EN LA PALABRA"
 
 							;;;;;solicitar la letra a buscar
 
- 00000069  B8 00000000					MOV EAX, 0
+ 000000A4  B8 00000000					MOV EAX, 0
 
- 0000006E  E8 00000000 E				call crlf
- 00000073  E8 00000000 E				call crlf
-							Println "Ingresa una Letra:  "
-P20_PlantillaProyectoUnidad.asm(118) : error A2008:syntax error : Println
- 00000078  E8 00000000 E				CALL READCHAR
- 0000007D  E8 00000000 E				CALL WRITECHAR
+ 000000A9  E8 00000000 E				call crlf
+ 000000AE  E8 00000000 E				call crlf
+							ImpPantallaLn "Ingresa una Letra:  "
+ 00000079		     1		.data
+ 00000079 49 6E 67 72 65     1			??0002 db "Ingresa una Letra:  ",0
+	   73 61 20 75 6E
+	   61 20 4C 65 74
+	   72 61 3A 20 20
+	   00
+ 000000B3		     1		.code
+ 000000B3  52		     1			push edx  ; guardo en la pila el valor
+ 000000B4  BA 00000079 R     1			mov edx, offset ??0002
+ 000000B9  E8 00000000 E     1			call writestring
+ 000000BE  E8 00000000 E     1			call crlf
+ 000000C3  5A		     1			pop edx   ;recupero el valor original de edx
+ 000000C4  E8 00000000 E				CALL READCHAR  ; guarda el caracter leido en "al"
+ 000000C9  E8 00000000 E				CALL WRITECHAR
 
- 00000082  E8 00000000 E				CALL CRLF 
+ 000000CE  E8 00000000 E				CALL CRLF 
 
-							Println "La Letra ingresada es: "
-P20_PlantillaProyectoUnidad.asm(124) : error A2008:syntax error : Println
- 00000087  E8 00000000 E				CALL WRITECHAR
+							ImpPantallaLn "La Letra ingresada es: "
+ 0000008E		     1		.data
+ 0000008E 4C 61 20 4C 65     1			??0003 db "La Letra ingresada es: ",0
+	   74 72 61 20 69
+	   6E 67 72 65 73
+	   61 64 61 20 65
+	   73 3A 20 00
+ 000000D3		     1		.code
+ 000000D3  52		     1			push edx  ; guardo en la pila el valor
+ 000000D4  BA 0000008E R     1			mov edx, offset ??0003
+ 000000D9  E8 00000000 E     1			call writestring
+ 000000DE  E8 00000000 E     1			call crlf
+ 000000E3  5A		     1			pop edx   ;recupero el valor original de edx
+ 000000E4  E8 00000000 E				CALL WRITECHAR
 
 							;;;;;;;;
- 0000008C  E8 00000000 E				call crlf
- 00000091  E8 00000000 E				call crlf
-							
-							;scasb 
+ 000000E9  E8 00000000 E				call crlf
+ 000000EE  E8 00000000 E				call crlf
+									
 
- 00000096  BF 0000002C R				mov edi, offset palabraSeleccionada_20	;				
+ 000000F3  BF 0000002C R				mov edi, offset palabraSeleccionada_20	;	para buscar el caracter ingresado			
+ 000000F8  BE 0000003F R				mov esi, offset palabraEscondida_20   ; si existe, se usara para reeemplazar al punto por su caracter
 
- 0000009B  BE 0000003F R				mov esi, offset palabraEscondida_20   ; 
+ 000000FD  8B 0D 0000003B R				mov ecx, contador_20 ;
 
- 000000A0  8B 0D 0000003B R				mov ecx, contador_20 ;
+ 00000103						ciclo2:
 
- 000000A6						ciclo2:
+ 00000103  46							inc esi ; para mantener en el mismo indice a ambas palabras
 
- 000000A6  46							inc esi ; para mantener en el mismo indice a ambas palabras
-
- 000000A7  AE							scasb  ; compara lo que esta en el acumulador con la memoria direccionada				
-
- 000000A8  E8 00000000 E					call dumpregs 
-								
+ 00000104  AE							scasb  ; compara lo que esta en el acumulador con la memoria direccionada				
+												
 								; if es igual a cero.. then sobreescribimos con esa letra
 								; else no hacemos nada
 
- 000000AD  75 08						jnz continuar  ; si no es igual
+ 00000105  75 08						jnz continuar  ; si no es igual
 
- 000000AF  4E								dec esi  ; regresa al indice en el que fue igual
- 000000B0  87 F7							xchg esi, edi
- 000000B2  AA								stosb     ; aqui esta el error... <<<<<<---					
- 000000B3  4F								dec edi   
+								; si es cero, entoces se realiza: 
 
- 000000B4  87 F7							xchg esi, edi
- 000000B6  46								inc esi
+ 00000107  4E								dec esi  ; regresa al indice en el que fue igual
+ 00000108  87 F7							xchg esi, edi; intercambia "seleccionada" por "escondida"
+ 0000010A  AA								stosb     				
+ 0000010B  4F								dec edi   ; se debe decrementar en uno, debido a que edi se incremento 
+											  ; de manera automatica con stosb 
 
- 000000B7							continuar:				
+ 0000010C  87 F7							xchg esi, edi ;se regresan las palabras nuevamente a como estaban al principio					
+ 0000010E  46								inc esi
+
+ 0000010F							continuar:				
 					
- 000000B7  E2 ED					loop ciclo2
+ 0000010F  E2 F2					loop ciclo2
 
 							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- 000000B9  E8 00000000 E				call crlf
-							println "Palabra Escondida: "
-P20_PlantillaProyectoUnidad.asm(166) : error A2008:syntax error : println
- 000000BE  BA 0000003F R				mov edx, offset palabraEscondida_20
- 000000C3  E8 00000000 E				call writestring
- 000000C8  E8 00000000 E				call crlf
+ 00000111  E8 00000000 E				call crlf
+							ImpPantallaLn "Palabra Escondida: "
+ 000000A6		     1		.data
+ 000000A6 50 61 6C 61 62     1			??0004 db "Palabra Escondida: ",0
+	   72 61 20 45 73
+	   63 6F 6E 64 69
+	   64 61 3A 20 00
+ 00000116		     1		.code
+ 00000116  52		     1			push edx  ; guardo en la pila el valor
+ 00000117  BA 000000A6 R     1			mov edx, offset ??0004
+ 0000011C  E8 00000000 E     1			call writestring
+ 00000121  E8 00000000 E     1			call crlf
+ 00000126  5A		     1			pop edx   ;recupero el valor original de edx
+ 00000127  BA 0000003F R				mov edx, offset palabraEscondida_20
+ 0000012C  E8 00000000 E				call writestring
+ 00000131  E8 00000000 E				call crlf
 							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 						exit	
 
 						
 					
- 000000D4				main20 ENDP
+ 0000013D				main20 ENDP
 					
 					END main20
-Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/24/21 08:43:35
+Microsoft (R) Macro Assembler Version 14.16.27027.1	    11/25/21 09:05:01
 Intro Cadena						     Symbols 2 - 1
 
 
@@ -388,8 +467,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000004E Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000D4 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000BA Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000013D Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -496,12 +575,12 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main20 . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000D4 Public STDCALL
-  ciclo  . . . . . . . . . . . .	L Near	 00000012 _TEXT	
-  detener  . . . . . . . . . . .	L Near	 00000031 _TEXT	
-  repite . . . . . . . . . . . .	L Near	 00000043 _TEXT	
-  ciclo2 . . . . . . . . . . . .	L Near	 000000A6 _TEXT	
-  continuar  . . . . . . . . . .	L Near	 000000B7 _TEXT	
+main20 . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000013D Public STDCALL
+  ciclo  . . . . . . . . . . . .	L Near	 00000027 _TEXT	
+  detener  . . . . . . . . . . .	L Near	 00000045 _TEXT	
+  repite . . . . . . . . . . . .	L Near	 0000007C _TEXT	
+  ciclo2 . . . . . . . . . . . .	L Near	 00000103 _TEXT	
+  continuar  . . . . . . . . . .	L Near	 0000010F _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -511,6 +590,11 @@ Symbols:
 
                 N a m e                 Type     Value    Attr
 
+??0000 . . . . . . . . . . . . .	Byte	 0000004E _DATA	
+??0001 . . . . . . . . . . . . .	Byte	 00000065 _DATA	
+??0002 . . . . . . . . . . . . .	Byte	 00000079 _DATA	
+??0003 . . . . . . . . . . . . .	Byte	 0000008E _DATA	
+??0004 . . . . . . . . . . . . .	Byte	 000000A6 _DATA	
 @CodeSize  . . . . . . . . . . .	Number	 00000000h   
 @DataSize  . . . . . . . . . . .	Number	 00000000h   
 @Interface . . . . . . . . . . .	Number	 00000003h   
@@ -745,4 +829,4 @@ wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
 	   0 Warnings
-	   5 Errors
+	   0 Errors
